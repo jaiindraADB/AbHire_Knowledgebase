@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            *{
+                box-sizing: border-box;
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+            }
+            body, html{
+                margin: 0;
+                height: 100%;
+                background-color: #f9fafb;
+                display: flex;
+            }
+            .container{
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+            .main{
+                flex: 1;
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                width: 100vw;
+            }
+            .main header h1 {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 16px;
+            }
+            .tabs{
+                display: flex;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+             button{
+                padding: 8px 16px;
+                background-color: #465FFF;
+                color: #f9fafb;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 500;
+            }
+            .scroll-area{
+                margin-top: 20px;
+                flex: 1;
+                overflow-y: auto;
+                padding-right: 16px;
+            }
+            .card{
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 1px 9px rgba(0,0,0,0.15);
+                padding: 16px;
+                margin-bottom: 16px;
+                width: 60%;
+            }
+            .card header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .card p{
+                font-size: 14px;
+                color: #374151;
+            }
+            .card2{
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 1px 9px rgba(0,0,0,0.15);
+                padding: 16px;
+                margin-bottom: 16px;
+                width: 60%;
+            }
+            .card2 header{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .card2 p{
+                font-size: 14px;
+                color: #374151;
+            }
+            .add-section-btn {
+                width: 100%;
+                padding: 12px;
+                background-color: #10b981;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 20px;
+            }
+            .help-sidebar{
+                width: 250px;
+                background-color: #f9fafb;
+                border-left: 1px solid #e5e7eb;
+                padding: 20px;
+                display: none;
+            }
+            .help-sidebar h3 {
+                font-weight: 600;
+                margin-bottom: 12px;
+            }
+            table{
+                width: 70%;
+                border-collapse: collapse;
+                background-color: #ffffff;
+                color: #374151;
+                font-size: 14px;
+                border-radius: 6px;
+                overflow: hidden;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            }
+            th, td{
+                padding: 12px 16px;
+                border-bottom: 1px solid #e5e7eb;
+                text-align: left;
+            }
+            th{
+                background-color: #e2e8f0;
+                font-weight: 600;
+            }
+            tr:last-child td{
+                border-bottom: none;
+            }
+            
+            .input-text{
+                width: 20%;
+                border-radius: 4px;
+                padding: 5px;
+                border-width: 1px;
+                border-color: gray;
+                margin-bottom: 10px;
+            }
+            .scroll-area{
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <main class="main">
+            <header>
+                <h1>Post New Job Opening</h1>
+            </header>
+            <div class="Tabs">
+                <button onclick="toggleJobOverview()">Job openings</button>
+                <button onclick="toggleAddOverview()">+ Add new job</button>
+                
+            <input placeholder="Search or type command..."  type="text" class="input-text">
+            </div>
+            <div class="scroll-area">
+            <div id="card">
+                <div class="card-header" id="jobOverviewExplanation" style="display: none;">
+                    <h2>Job Description</h2>
+                    <p>This section is used by the admin to manage andmonitor all job postings. Each entry
+                    in the table below</p>
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Code</td>
+                            <td>Unique job post identifier for tracking purposes</td>
+                        </tr>
+                        <tr>
+                            <td>Title</td>
+                            <td>The role or position offered (e.g Java Developer, Front endDeveloper).</td>
+                        </tr>
+                        <tr>
+                            <td>Location</td>
+                            <td>Indicates the branch or area where the job is based.</td>
+                        </tr>
+                        <tr>
+                            <td>Open Posts</td>
+                            <td>Number of vacancies available for the role.</td>
+                        </tr>
+                        <tr>
+                            <td>Created at</td>
+                            <td>The date of which the job was posted</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>Reflects the current state of the Job post (Active, Draft, Initial Screening).</td>
+                        </tr>
+                        <tr>
+                            <td>Experience</td>
+                            <td>Years of Experience want for the job to Eligible</td>
+                        </tr>
+                        <tr>
+                            <td>Action</td>
+                            <td>Options to edit or delete the respective job entry.</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                <p>Use the search Box to filter Jobs. The dropdown allows viewing more than 10 entries at once.</p>
+                </div>
+            </div>
+            <div id="card2">
+               <div class="card-header" id="addJobExplanation" style="display: none;">
+                    <!---section 1--->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">Job Overview Section</h2>
+                        <p class="text-gray-600">Capture core job metadata including title, client name, location, type and more.</p>
+                        <table class="table-auto w-full mt-2 text-sm text-gray-700 border border-gray-200">
+                            <tbody>
+                                <tr><td class="border px-4 py-2 font-medium">Job Title</td><td class="border px-4 py-2">e.g. , Frontend Developer</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Job code</td><td class="border px-4 py-2">Internal reference</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Client Name</td><td class="border px-4 py-2">Company Name</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Location</td><td class="border px-4 py-2">City or work Location</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Job Type</td><td class="border px-4 py-2">Contract, Full-Time, etc.</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">wOrk Hours</td><td class="border px-4 py-2">Optional time slot</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Work Model</td><td class="border px-4 py-2">Hbrid, Remote, etc.</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Open Positions</td><td class="border px-4 py-2">Number of vacancies</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Industry</td><td class="border px-4 py-2">Field/domain like Technlogy</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!---section 2--->
+                    <div>
+                        <h2 class="text-lg font -semibold text-gray-800">Salary Section</h2>
+                        <p class="text-gray-600">Define the compensation details for the position .</p>
+                        <table class="table-auto w-full mt-2 text-sm text-gray-700 border border-gray-200">
+                            <tbody>
+                                <tr><td class="border px-4 py-2 font-medium">Salary Currency</td><td class="border px-4 py-2">INR, USD, etc.</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Salary Range</td><td class="border px-4 py-2">Minimum & Maximum Salary</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!---section 3--->
+                    <div>
+                        <h2 class="text-lg font -semibold text-gray-800">3. Job Details Section</h2>
+                        <p class="text-gray-600">detailed Job expectations, qualifications and internal notes .</p>
+                        <table class="table-auto w-full mt-2 text-sm text-gray-700 border border-gray-200">
+                            <tbody>
+                                <tr><td class="border px-4 py-2 font-medium">Job Description</td><td class="border px-4 py-2">Responsibilites, tools, etc.</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Skills Required</td><td class="border px-4 py-2">Tags for filterings</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Experience Level</td><td class="border px-4 py-2">Entry, Mid, Senior</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Education Level</td><td class="border px-4 py-2">Bachelor's, Master's, etc.</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Recruiter</td><td class="border px-4 py-2">Internal team member responsible</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Notes</td><td class="border px-4 py-2">Private or client instructions</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!---section 4-->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-800">4. Interview Rounds Table</h2>
+                        <p class="text-gray-600">Configure multi-stage interviews with duration and automation .</p>
+                        <table>
+                            <tbody>
+                                <tr><td class="border px-4 py-2 font-medium">Add Round</td><td class="border px-4 py-2">Append new interview stages</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Ai Scheduling</td><td class="border px-4 py-2">Enable automated Scheduling</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Search Bar</td><td class="border px-4 py-2">Filter rounds efficeintly</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!---section 5-->
+                    <div>
+                        <h2 class="text-lg font -semibold text-gray-800">5. Additional Questions Table</h2>
+                        <p class="text-gray-600">Add screening questions for candidate evaluation .</p>
+                        <table class="table-auto w-full mt-2 text-sm text-gray-700 border border-gray-200">
+                            <tbody>
+                                <tr><td class="border px-4 py-2 font-medium">Add Question</td><td class="border px-4 py-2">Custom question & answer</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Expected Answer</td><td class="border px-4 py-2"> Optional correct response</td></tr>
+                                <tr><td class="border px-4 py-2 font-medium">Is Mandatory</td><td class="border px-4 py-2">Make field compulsory</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!---section 6-->
+                    <div>
+                        <h2 class="text-lg font-smibold text-gray-800">6. Functional Highlights</h2>
+                        <ul class="list-disc list-inside text-gray-600 ml-4">
+                            <li>Response layout using <strong>Tailwind Css</strong></li>
+                            <li>Expandable cards for better UX</li>
+                            <li>Future-ready: AI Job Post, Template Import, etc .</li>
+                        </ul>
+                    </div>
+               </div>
+            </div>
+            <div>  
+            </div>
+            </div>
+            </main>
+            <aside class="help-sidebar">
+            <h3>Help & Tips</h3>
+            <ul>
+            <li>.How to write a JD</li>
+            <li>.AI Job Post Instuctions</li>
+            <li>.Save & Publish Guide</li>
+            </ul>
+            </aside>
+            </div>
+            <script>
+            function toggleJobOverview() {
+                const box = document.getElementById('jobOverviewExplanation');
+                const ca = document.getElementById('card');
+                ca.classList.toggle('card');
+                box.style.display = box.style.display === 'none' ? 'block' : 'none';
+            }
+            function toggleAddOverview(){
+                const box2 = document.getElementById('addJobExplanation');
+                const cd = document.getElementById('card2');
+                cd.classList.toggle('card2');
+                box2.style.display = box2.style.display === 'none' ? 'block' : 'none';
+            }
+        </script>
+    </body>
+</html>
