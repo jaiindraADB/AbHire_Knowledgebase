@@ -1,80 +1,36 @@
-<html>
-    <head>
-        <style>
-            card{
-                width: 40%;
-            }
-        </style>
-    </head>
-    <body>
-        <div className="card bg-white dark:bg-white/[0.03]">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <h4 className="card-title">Profile Details</h4>
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-                  <div>
-                    <p className="subheader">First Name</p>
-                    <p className="content">Harmeet</p>
-                  </div>
-                  <div>
-                    <p className="subheader">Last Name</p>
-                    <p className="content">Arora</p>
-                  </div>
-                  <div>
-                    <p className="subheader">Email</p>
-                    <p className="content">harmeeta2@gmail.com</p>
-                  </div>
-                  <div>
-                    <p className="subheader">phone</p>
-                    <p className="content">7972195259
-                    </p>
-                  </div>
-                  <div>
-                    <p className="subheader">Date of Birth</p>
-                    <p className="content">2025-08-02
-                    </p>
-                  </div>
-                  <div>
-                    <p className="subheader">Total Experience in months</p>
-                    <p className="content">111
-                    </p>
-                  </div>
-                  <div>
-                    <p className="subheader">Notice Period</p>
-                    <p className="content">null</p>
-                  </div>
-                  <div>
-                    <p className="subheader">Expected Joining Date</p>
-                    <p className="content">null</p>
-                  </div>
-                  <div>
-                    <p className="subheader">cv_summary</p>
-                    <p className="content">Currently working as a Content Writer with Astral Informatics Limited since Feb 2022.
-                         Expertise in management and development of content for various websites. Passionate about learning new techniques and concepts.</p>
-                  </div>
-                  <div>
-                    <p className="subheader">Current salary</p>
-                    <p className="content">Current salary</p>
-                  </div>
-                  <div>
-                    <p className="subheader">Expected salary</p>
-                    <p className="content">Expected salary</p>
-                  </div>
-                  <div>
-                    <p className="subheader">Gender</p>
-                    <p className="content">Female</p>
-                  </div>
-                  <div>
-                    <p className="subheader">city</p>
-                    <p className="content">city</p>
-                  </div>
+<table>
+        <thead className="border-t border-gray-100 dark:border-white/[0.05]">
+          <tr>
+            <td children={undefined} />
+            {[
+              { key: "company", label: "company" },
+              { key: "title", label: "title" },
+              { key: "start_date", label: "start_date" },
+              { key: "end_date", label: "end_date" },
+              { key: "is_current", label: "is_current" },
+              { key: "duration_in_months", label: "duration_in_months" },
+              { key: "profile_id", label: "profile_id" }
+            ].map(({ key, label }) => (
+              <td
+                key={key}
+                className="px-4 py-3 border border-gray-100 dark:border-white/[0.05]"
+              >
+                <div
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <p className="font-medium text-gray-700 text-theme-xs dark:text-gray-400">
+                    {label}
+                  </p>
                 </div>
-              </div>
-              <button onClick={openModal} className="edit-button">
-                <PencilIcon className="w-5 h-5" />
-                Edit
-              </button>
-            </div>
-          </div>
-    </body>
-</html>
+              </td>
+            ))}
+            <td
+              className="px-4 py-3 border border-gray-100 dark:border-white/[0.05]"
+            >
+              <p className="font-medium text-gray-700 text-theme-xs dark:text-gray-400">
+                Action
+              </p>
+            </td>
+          </tr>
+        </thead>
+      </table>
