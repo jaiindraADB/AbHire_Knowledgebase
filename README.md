@@ -1,10 +1,6 @@
-
-
-
-const ProfileDetailsCard = () => {
-  return (
-    <>
-    <div className="flex justify-center">
+<div className="d-flex flex-column">
+    <div>
+      <div className="flex justify-center">
       <div className="card bg-white m-3 dark:bg-white/[0.03] p-6 rounded-xl shadow-md w-full lg:w-[35%]">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
@@ -105,7 +101,9 @@ const ProfileDetailsCard = () => {
         </div>
       </div>
     </div>
-    <div className="overflow-x-auto w-full">
+    </div>
+   <div className="ml-4">
+     <div className="overflow-x-auto w-full">
   <table className="table-auto border-collapse border border-gray-200 dark:border-white/[0.1] w-auto">
     <thead className="bg-gray-50 dark:bg-white/[0.03]">
       <tr>
@@ -155,10 +153,10 @@ const ProfileDetailsCard = () => {
           company: "Talentica Software Ltd",
           title: "",
           start_date: "2012-11-01",
-          end_date: "2016-01-01",
-          is_current: "false",
-          duration_in_month: 38,
-          profile_id: 40,
+        end_date: "2016-01-01",
+        is_current: "false",
+        duration_in_month: 38,
+        profile_id: 40,
         },
         {
           company: "Aricent Group",
@@ -195,11 +193,6 @@ const ProfileDetailsCard = () => {
       ))}
     </tbody>
   </table>
-</div>
-
-      </>
-      
-  );
-};
-
-export default ProfileDetailsCard;
+    </div>
+   </div>
+    </div>
