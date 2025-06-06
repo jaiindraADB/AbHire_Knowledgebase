@@ -1,28 +1,34 @@
-[webpack-dev-server] Loopback: http://localhost:3000/
- const submitbutton = document.getElementById('Submit');
-        submitbutton.addEventListener('click', async () => {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-       const data = {
-         email,
-            password
-       }
-        const corsProxy = "https://cors-anywhere.herokuapp.com/";
-        const apiURL = "https://abhirebackend.onrender.com/auth/login";
-        
-                fetch(corsProxy + apiURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
+Login Failed: ReferenceError: axios is not defined
+    at HTMLButtonElement.<anonymous> (signin.html:358:26)
+const corsProxy = "https://cors-anywhere.herokuapp.com/";
+    const apiURL = "https://abhirebackend.onrender.com/auth/login";
+    
+      const email = document.getElementById("Email").value;
+      const password = document.getElementById("Password").value;
+      const button = document.getElementById('signin');
+      button.addEventListener('click', async function(e) {
+      e.preventDefault();
+
+
+      try {
+        const response = await axios.post( apiURL, {
+          email,
+          password
+        }, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        console.log("✅ Login Success:");
+        alert("Login successful." );
+
+        // You can now store the token, redirect, or call another API
+        // localStorage.setItem("token", response.data.token);
+        // window.location.href = "/dashboard.html";
+
+      } catch (error) {
+        console.error("❌ Login Failed:", error);
+        alert("Login failed: " + (error.response?.data?.message || error.message));
+      }
       })
-      .then(res => res.json())
-      .then(data => console.log("Login Success:", data))
-      .catch(err => console.error("Login Failed:", err));
-              });
-[webpack-dev-server] Server started: Hot Module Replacement enabled, Live Reloading enabled, Progress disabled, Overlay enabled.
-bundle.js:456 [HMR] Waiting for update signal from WDS...
-index.js:112 Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
-    at HTMLDocument.eval (index.js:112:16)
-eval	@	index.js:112
