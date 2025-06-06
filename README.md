@@ -1,34 +1,32 @@
-Login Failed: ReferenceError: axios is not defined
-    at HTMLButtonElement.<anonymous> (signin.html:358:26)
-const corsProxy = "https://cors-anywhere.herokuapp.com/";
-    const apiURL = "https://abhirebackend.onrender.com/auth/login";
-    
-      const email = document.getElementById("Email").value;
-      const password = document.getElementById("Password").value;
-      const button = document.getElementById('signin');
-      button.addEventListener('click', async function(e) {
-      e.preventDefault();
+xhr.js:195 
+ POST https://cors-anywhere.herokuapp.com/https://abhirebackend.onrender.com/auth/login 404 (Not Found)
 
-
-      try {
-        const response = await axios.post( apiURL, {
-          email,
-          password
-        }, {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-
-        console.log("✅ Login Success:");
-        alert("Login successful." );
-
-        // You can now store the token, redirect, or call another API
-        // localStorage.setItem("token", response.data.token);
-        // window.location.href = "/dashboard.html";
-
-      } catch (error) {
-        console.error("❌ Login Failed:", error);
-        alert("Login failed: " + (error.response?.data?.message || error.message));
-      }
-      })
+signin.html:376 ❌ Login Failed: 
+ye {message: 'Request failed with status code 404', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
+code
+: 
+"ERR_BAD_REQUEST"
+config
+: 
+{transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 0, …}
+message
+: 
+"Request failed with status code 404"
+name
+: 
+"AxiosError"
+request
+: 
+XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
+response
+: 
+{data: {…}, status: 404, statusText: 'Not Found', headers: r, config: {…}, …}
+status
+: 
+404
+stack
+: 
+"AxiosError: Request failed with status code 404\n    at Ye (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:31710)\n    at XMLHttpRequest.y (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:36585)\n    at e.<anonymous> (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:48581)\n    at p (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:3448)\n    at Generator.<anonymous> (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:4779)\n    at Generator.throw (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:3858)\n    at p (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:9996)\n    at s (https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js:2:10235)"
+[[Prototype]]
+: 
+Error
