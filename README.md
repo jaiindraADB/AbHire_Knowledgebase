@@ -11,7 +11,7 @@ export default function ProfileDetailsCard() {
       try{
       const API_URl = `${API_BASE_URL}/hiringflow/steps`;
       const response = await axios.get(API_URl);
-      setData(response.data) ;
+      setData( response.data);
       console.log(response.data)
     } catch (error) {
       console.log(error);
