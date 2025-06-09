@@ -1,6 +1,77 @@
+
+import Button from "../../components/ui/button/Button";
+import { Modal } from "../../components/ui/modal";
+import { useModal } from "../../hooks/useModal";
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow
+} from "../../components/ui/table";
+import { SearchIcon } from "../../icons";
+
+type SortKey =
+  | "Client Name"
+  |  "country"
+  | "Location"
+  |  "Time Zone"
+  | "Contact Person Name"
+  | "Email"
+
+export default function ClientInformation({
+    handleSearchStringChange,
+    searchTerm
+}:{
+     handleSearchStringChange: (filter_key: string, value: string) => void;
+     searchTerm: string;
+}) {
+    const [formData, setFormData] = useState({
+                Client_Name: "",
+                Location: "",
+                country: "",
+                Time_Zone: "",
+                Contact_Person_Name: "",
+                Email: "",
+                contact_phone: "",
+                Notes: "",
+});
+   const [clientProfile, setClientProfile] = useState([]);
+   const { isOpen, openModal, closeModal } = useModal();
+  const [sortKey, setSortKey] = useState<SortKey>("Company");
+    const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortOrder("asc");
+    }
+  };
+  
+const handleChange = (e) => {
+  setFormData({ ...formData, [e.target.name]: e.target.value });
+};
 const adddTolist = () => {
-console.log('save button triggered')
+  if (!formData.Client_Name || !formData.Location || !formData.country) {
+    alert("Please fill all required fields.");
+    return;
   }
+
+  setClientProfile([...clientProfile, formData]);
+  setFormData({
+    Client_Name: "",
+    Location: "",
+    country: "",
+    Time_Zone: "",
+    Contact_Person_Name: "",
+    Email: "",
+    contact_phone: "",
+    Notes: "",
+  });
+  closeModal();
+};
     return (
         <div>
             <div className="flex px-1 dark:border-white/[0.05] rounded-t-xl sm:flex-row sm:items-center sm:justify-end">
@@ -145,9 +216,12 @@ console.log('save button triggered')
                 <div>
                <div className="relative flex gap-5 mt-4">
                          <div>
-                    <label className="block font-medium mb-1">Client Name <span style={{ color: 'red' }}>*</span></label><input
+                    <label className="block font-medium mb-1">Client Name <span style={{ color: 'red' }}>*</span></label>
+                    <input
                     type="text"
                     placeholder="Field Name"
+                    value={formData.Client_Name}
+                    onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-11 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                 /> 
                 </div>
@@ -156,6 +230,8 @@ console.log('save button triggered')
                 <input
                     type="text"
                     placeholder="Location"
+                    value={formData.Client_Name}
+                    onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-11 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                 />
                </div>
@@ -166,6 +242,8 @@ console.log('save button triggered')
                 <input
                     type="text"
                     placeholder="Country"
+                    value={formData.Client_Name}
+                    onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-11 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                 />
                </div>
@@ -174,6 +252,8 @@ console.log('save button triggered')
                 <input
                     type="text"
                     placeholder="Time Zone"
+                    value={formData.Client_Name}
+                    onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-11 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                 />
                </div>
@@ -184,6 +264,8 @@ console.log('save button triggered')
                 <input
                     type="text"
                     placeholder="Contact Person Name"
+                    value={formData.Client_Name}
+                    onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-11 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                 required/>
                </div>
@@ -192,6 +274,8 @@ console.log('save button triggered')
                 <input
                     type="text"
                     placeholder="Email"
+                    value={formData.Client_Name}
+                    onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-11 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                 />
                </div>
@@ -222,3 +306,10 @@ console.log('save button triggered')
                 </div>
                 </div>
             </Modal>
+        </div>
+    );
+}
+
+
+
+
