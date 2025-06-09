@@ -1,27 +1,8 @@
-(10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, config
-: 
-{}
-created_at
-: 
-"2025-06-06T15:51:10.454979"
-description
-: 
-"Initial job posting creation"
-hiringflow_steps_master_id
-: 
-1
-is_active
-: 
-true
-is_configurable
-: 
-true
-step_code
-: 
-"CREATE_JOB_POST"
-step_level
-: 
-10
-step_name
-: 
-"Create Job Post"
+npm error code ENOENT
+npm error syscall open
+npm error path D:\Developers\JaiIndra\New project\package.json
+npm error errno -4058
+npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'D:\Developers\JaiIndra\New project\package.json'
+npm error enoent This is related to npm not being able to find a file.
+npm error enoent
+npm error A complete log of this run can be found in: C:\Users\JaiIndra\AppData\Local\npm-cache\_logs\2025-06-09T04_43_38_556Z-debug-0.log
