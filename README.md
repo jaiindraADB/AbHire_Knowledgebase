@@ -1,7 +1,7 @@
 import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -10,83 +10,120 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import { SearchIcon } from "../../icons";
-import axios from "axios";
+import Select from "../../components/form/Select";
+import { Controller, useForm } from "react-hook-form";
+import axios from "axios"; 
 
 type SortKey =
-  | "Client Name"
+  | "client_name" 
   | "country"
-  | "Location"
-  | "Contact Person Name"
-  | "Email"
-  | "Postal_Code";
+  | "location"
+  | "primary_contact_name" 
+  | "contact_email" 
+  | "phone_number" 
+  | "notes" 
+  | "address1"
+  | "address2"
+  | "city"
+  | "state"
+  | "postal_code"
+  | "landmark"
+  | "google_map_url"; 
 type SortOrder = "asc" | "desc";
 
 type ClientData = {
-    [x: string]: ReactNode;
-  client_name: string,
-    location: string,
-    country: string,
-    primary_contact_name: string,
-    contact_email: string,
-    phone_number: string,
-    Notes: string,
-    address1: string,
-    address2: string,
-    city: string,
-    state: string,
-    country_id: string,
-    postal_code: string,
-    landmark: string,
-    google_map_url: string,
-    notes : string;
-    
+  client_name: string;
+  location: string;
+  country: string; 
+  primary_contact_name: string; 
+  contact_email: string; 
+  phone_number: string;
+  notes: string; 
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  country_id: number; 
+  postal_code: string;
+  landmark: string;
+  google_map_url: string;
+  
 };
-
-
 
 export default function ClientInformation() {
   const [formData, setFormData] = useState<ClientData>({
     client_name: "",
     location: "",
-    country: "",
+    country: "", 
     primary_contact_name: "",
     contact_email: "",
     phone_number: "",
-    Notes: "",
+    notes: "", 
     address1: "",
     address2: "",
     city: "",
     state: "",
-    country_id: "",
+    country_id: 91, 
     postal_code: "",
     landmark: "",
     google_map_url: "",
-    notes : ""
   });
-  const [clientProfile, setClientProfile] = useState<ClientData[]>([]); 
+  const [clientProfile, setClientProfile] = useState<ClientData[]>([]);
+  const [countrycodes, setcountrycode] = useState<ClientData[]>([]);
   const { isOpen, openModal, closeModal } = useModal();
-  const [sortKey, setSortKey] = useState<SortKey>("Client Name");
+  const [sortKey, setSortKey] = useState<SortKey>("client_name"); 
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [searchTerm, setSearchTerm] = useState("");
-  const key = localStorage.getItem('authToken');
+  const authToken = localStorage.getItem("authToken"); 
 
   useEffect(() => {
     fetchClients();
-  }, []); 
+    fetchCountrycodes();
+  }, []);
 
   const fetchClients = async () => {
     try {
-      const response = await fetch("https://abhirebackend.onrender.com/clients/clients");
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+      
+      const response = await axios.get("https://abhirebackend.onrender.com/clients/clients", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data: ClientData[] = response.data;
       setClientProfile(data);
     } catch (error) {
       console.error("Error fetching clients:", error);
-      alert("Failed to fetch client data.");
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Fetch Error Response:", error.response.data);
+        alert(`Failed to fetch client data: ${error.response.statusText || 'Unknown error'}. Please check your authentication.`);
+      } else {
+        alert("Failed to fetch client data. Please try again.");
+      }
     }
   };
+
+  const fetchCountrycodes = async () => {
+     try {
+      const response = await axios.get("https://abhirebackend.onrender.com/metadata/countries", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data: ClientData[] = response.data;
+      console.log(data)
+      setcountrycode(data);
+    } catch (error) {
+      console.error("Error fetching", error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Fetch Error Response:", error.response.data);
+        alert(`Failed to fetch`);
+      } else {
+        alert("Failed to fetch");
+      }
+    }
+  }
 
   const handleSort = (key: SortKey) => {
     if (sortKey === key) {
@@ -102,12 +139,19 @@ export default function ClientInformation() {
   };
 
   const addToList = async () => {
-    if (!formData.client_name || !formData.location || !formData.country) {
+    if (!formData.client_name || !formData.location || !formData.country_id) {
       alert("Please fill all required fields: Client Name, Location, and Country.");
       return;
     }
+    if (!formData.primary_contact_name || !formData.contact_email) {
+      alert("Contact Person Name and Contact Email are required.");
+      return;
+    }
+    if (!formData.address1 || !formData.address2 || !formData.city || !formData.state || !formData.postal_code || !formData.landmark || !formData.google_map_url) {
+      alert("All address and map URL fields are required.");
+      return;
+    }
 
-   
     const postData = {
       client_name: formData.client_name,
       location: formData.location,
@@ -118,27 +162,28 @@ export default function ClientInformation() {
       address2: formData.address2,
       city: formData.city,
       state: formData.state,
-      country_id:  '91',
+      country_id: 91,
       postal_code: formData.postal_code,
       landmark: formData.landmark,
       google_map_url: formData.google_map_url,
-      notes: formData.Notes,
+      notes: formData.notes, 
     };
 
     try {
-      const response = await axios("https://abhirebackend.onrender.com/clients/clients", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
+      const response = await axios.post(
+        "https://abhirebackend.onrender.com/clients/clients",
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        }
+      );
+      console.log("Client added successfully:", response.data);
 
-      if (!response) {
-        throw new Error(`HTTP error! status: ${response}`);
-      }
-      await fetchClients();
+      await fetchClients(); 
       setFormData({
         client_name: "",
         location: "",
@@ -146,22 +191,26 @@ export default function ClientInformation() {
         primary_contact_name: "",
         contact_email: "",
         phone_number: "",
-        Notes: "",
+        notes: "",
         address1: "",
         address2: "",
         city: "",
         state: "",
-        country_id: "",
+        country_id: "91", // Reset to default hardcoded ID
         postal_code: "",
         landmark: "",
         google_map_url: "",
-        notes : ""
       });
       closeModal();
     } catch (error) {
-        console.log(postData)
+      console.log("POST Data being sent:", postData); 
       console.error("Error adding client:", error);
-      alert("Failed to add client. Please try again.");
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Error Response Data:", error.response.data);
+        alert(`Failed to add client`);
+      } else {
+        alert("Failed to add client");
+      }
     }
   };
 
@@ -197,19 +246,19 @@ export default function ClientInformation() {
                 <TableRow>
                   {[
                     "Client Name",
-                    "country",
+                    "Country", // Display label
                     "Location",
                     "Contact Person Name",
                     "Email",
-                    "contact phone",
+                    "Contact Phone", // Display label
                     "Notes",
                     "Address1",
                     "Address2",
                     "City",
                     "State",
-                    "Postal_code",
+                    "Postal Code", // Display label
                     "Landmark",
-                    "Maps_Url",
+                    "Maps URL", // Display label
                   ].map((label, index) => (
                     <TableCell
                       key={index}
@@ -218,24 +267,24 @@ export default function ClientInformation() {
                     >
                       <div
                         className="flex items-center justify-between cursor-pointer"
+                        // Map display labels to actual sort keys from ClientData
                         onClick={() =>
                           handleSort(
-                            // Corrected mapping for sort keys
                             [
-                              "Client Name",
-                              "country",
-                              "Location",
-                              "Contact Person Name",
-                              "Email",
-                              "contact phone",
-                              "Notes",
-                              "Address1",
-                              "Address2",
-                              "City",
-                              "State",
-                              "Postal_Code",
-                              "Landmark",
-                              "Maps_Url",
+                              "client_name",
+                              "country", // Assuming you'd sort by the country string here, or client_id if that were available
+                              "location",
+                              "primary_contact_name",
+                              "contact_email",
+                              "phone_number",
+                              "notes",
+                              "address1",
+                              "address2",
+                              "city",
+                              "state",
+                              "postal_code",
+                              "landmark",
+                              "google_map_url",
                             ][index] as SortKey
                           )
                         }
@@ -248,20 +297,20 @@ export default function ClientInformation() {
                             className={`text-gray-300 dark:text-gray-700 ${
                               sortKey ===
                                 [
-                                  "Client Name",
+                                  "client_name",
                                   "country",
-                                  "Location",
-                                  "Contact Person Name",
-                                  "Email",
-                                  "contact phone",
-                                  "Notes",
-                                  "Address1",
-                                  "Address2",
-                                  "City",
-                                  "State",
-                                  "Postal_Code",
-                                  "Landmark",
-                                  "Maps_Url",
+                                  "location",
+                                  "primary_contact_name",
+                                  "contact_email",
+                                  "phone_number",
+                                  "notes",
+                                  "address1",
+                                  "address2",
+                                  "city",
+                                  "state",
+                                  "postal_code",
+                                  "landmark",
+                                  "google_map_url",
                                 ][index] && sortOrder === "asc"
                                 ? "text-brand-500"
                                 : ""
@@ -301,22 +350,22 @@ export default function ClientInformation() {
                       {data.client_name}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                      {data.country}
+                      {data.country} {/* Display `country` from fetched data */}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
                       {data.location}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                      {data.Contact_Person_Name}
+                      {data.primary_contact_name} {/* Use correct key */}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                      {data.email}
+                      {data.contact_email} {/* Use correct key */}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                      {data.contact_phone}
+                      {data.phone_number}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                      {data.Notes}
+                      {data.notes} {/* Use correct key */}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
                       {data.address1}
@@ -337,7 +386,7 @@ export default function ClientInformation() {
                       {data.landmark}
                     </TableCell>
                     <TableCell className="px-4 py-4 font-medium text-gray-800 border border-gray-300 dark:border-white/[0.05] text-theme-sm dark:text-gray-400 whitespace-nowrap">
-                      {data.google_map_url}
+                      {data.google_map_url} {/* Use correct key */}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -350,7 +399,7 @@ export default function ClientInformation() {
         <div className="overflow-hidden ml-4">
           <div className="flex flex-col flex-3 mr-4">
             <div>
-              <h2>Basic Informaion</h2>
+              <h2>Basic Information</h2> {/* Corrected spelling */}
               <div className="relative flex gap-5 mt-4">
                 <div>
                   <label className="block font-medium mb-1">
@@ -360,7 +409,7 @@ export default function ClientInformation() {
                     type="text"
                     placeholder="Field Name"
                     value={formData.client_name}
-                    name="client_name"
+                    name="client_name" // Use consistent lowercase
                     onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                   />
@@ -373,7 +422,7 @@ export default function ClientInformation() {
                     type="text"
                     placeholder="Location"
                     value={formData.location}
-                    name="location"
+                    name="location" // Use consistent lowercase
                     onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                   />
@@ -386,9 +435,9 @@ export default function ClientInformation() {
                   </label>
                   <input
                     type="text"
-                    placeholder="Contact_Person_Name"
-                    value={formData.Contact_Person_Name}
-                    name="Contact_Person_Name"
+                    placeholder="Contact Person Name"
+                    value={formData.primary_contact_name}
+                    name="primary_contact_name" // Use consistent lowercase
                     onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                     required
@@ -401,8 +450,8 @@ export default function ClientInformation() {
                   <input
                     type="text"
                     placeholder="Email"
-                    name="email"
-                    value={formData.email}
+                    name="contact_email" // Use consistent lowercase
+                    value={formData.contact_email}
                     onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                   />
@@ -414,7 +463,7 @@ export default function ClientInformation() {
                   <input
                     type="Number"
                     placeholder="Phone"
-                    name="phone_number"
+                    name="phone_number" // Use consistent lowercase
                     value={formData.phone_number}
                     onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
@@ -425,8 +474,8 @@ export default function ClientInformation() {
                   <input
                     type="text"
                     placeholder="Notes"
-                    name="Notes"
-                    value={formData.Notes}
+                    name="notes" // Use consistent lowercase
+                    value={formData.notes}
                     onChange={handleChange}
                     className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                   />
@@ -442,7 +491,7 @@ export default function ClientInformation() {
                     <input
                       type="text"
                       placeholder="Address1"
-                      name="address1"
+                      name="address1" // Use consistent lowercase
                       value={formData.address1}
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
@@ -454,9 +503,9 @@ export default function ClientInformation() {
                     </label>
                     <input
                       type="text"
-                      placeholder="address2"
+                      placeholder="Address2"
                       value={formData.address2}
-                      name="address2"
+                      name="address2" // Use consistent lowercase
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                     />
@@ -469,8 +518,8 @@ export default function ClientInformation() {
                     </label>
                     <input
                       type="text"
-                      placeholder="city"
-                      name="city"
+                      placeholder="City"
+                      name="city" // Use consistent lowercase
                       value={formData.city}
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
@@ -482,9 +531,9 @@ export default function ClientInformation() {
                     </label>
                     <input
                       type="text"
-                      placeholder="state"
+                      placeholder="State"
                       value={formData.state}
-                      name="state"
+                      name="state" // Use consistent lowercase
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                     />
@@ -493,16 +542,20 @@ export default function ClientInformation() {
                 <div className="flex gap-5 mt-2">
                   <div className="col-span-2 lg:col-span-1">
                     <label className="block font-medium mb-1">
-                      country <span style={{ color: "red" }}>*</span>
+                      Country <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="country"
-                      value={formData.country}
+                      placeholder="Country"
+                      value={formData.country} // Still using formData.country for display
                       name="country"
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                     />
+                    {/* Assuming country_id is handled internally or from another source,
+                        or you might need a hidden input for it if not directly from a dropdown
+                        <input type="hidden" name="country_id" value={formData.country_id} />
+                    */}
                   </div>
                   <div>
                     <label className="block font-medium mb-1">
@@ -512,7 +565,7 @@ export default function ClientInformation() {
                       type="text"
                       placeholder="Postal Code"
                       value={formData.postal_code}
-                      name="postal_code"
+                      name="postal_code" // Use consistent lowercase
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                     />
@@ -521,12 +574,12 @@ export default function ClientInformation() {
                 <div className="flex gap-5 mt-3">
                   <div>
                     <label className="block font-medium mb-1">
-                      LandMark <span style={{ color: "red" }}>*</span>
+                      Landmark <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="landmark"
-                      name="landmark"
+                      placeholder="Landmark"
+                      name="landmark" // Use consistent lowercase
                       value={formData.landmark}
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
@@ -540,7 +593,7 @@ export default function ClientInformation() {
                       type="text"
                       placeholder="Google Map Url"
                       value={formData.google_map_url}
-                      name="google_map_url"
+                      name="google_map_url" // Use consistent lowercase
                       onChange={handleChange}
                       className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[300px]"
                     />
@@ -548,8 +601,14 @@ export default function ClientInformation() {
                 </div>
               </div>
               <div className="relative justify-end flex mt-5 gap-5 mr-5 ">
-                <Button onClick={closeModal}> Close </Button>
-                <Button onClick={addToList}> Save </Button>
+                <Button onClick={closeModal} type="button">
+                  {" "}
+                  Close{" "}
+                </Button>
+                <Button onClick={addToList} type="submit">
+                  {" "}
+                  Save{" "}
+                </Button>
               </div>
             </div>
           </div>
@@ -558,37 +617,3 @@ export default function ClientInformation() {
     </div>
   );
 }
-
-Clientinformation.tsx:129 
- POST https://abhirebackend.onrender.com/clients/clients 403 (Forbidden)
-Clientinformation.tsx:162 
-{client_name: '@!@qw123', location: '1234@#$%', primary_contact_name: '', contact_email: '', phone_number: '1234567890', …}
-Clientinformation.tsx:163 Error adding client: 
-AxiosError {message: 'Request failed with status code 403', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
-code
-: 
-"ERR_BAD_REQUEST"
-config
-: 
-{transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 0, …}
-message
-: 
-"Request failed with status code 403"
-name
-: 
-"AxiosError"
-request
-: 
-XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 0, withCredentials: false, upload: XMLHttpRequestUpload, …}
-response
-: 
-{data: {…}, status: 403, statusText: '', headers: AxiosHeaders, config: {…}, …}
-status
-: 
-403
-stack
-: 
-"AxiosError: Request failed with status code 403\n    at settle (http://localhost:5173/node_modules/.vite/deps/axios.js?v=fc744e7a:1218:12)\n    at XMLHttpRequest.onloadend (http://localhost:5173/node_modules/.vite/deps/axios.js?v=fc744e7a:1550:7)\n    at Axios.request (http://localhost:5173/node_modules/.vite/deps/axios.js?v=fc744e7a:2108:41)\n    at async addToList (http://localhost:5173/src/pages/CompanyProfile/Clientinformation.tsx?t=1749526573388:96:30)"
-[[Prototype]]
-: 
-Error
